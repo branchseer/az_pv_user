@@ -32,6 +32,9 @@ jobs:
         winrm quickconfig -quiet
 
         Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c echo haha }
-        Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c exit 21 }
 
-        echo $LASTEXITCODE
+        $remoteSession = new-pssession -computername localhost
+        Invoke-Command -Session $remoteSession -Credential $cred -ScriptBlock { & cmd /c "echo 1231 && exit 21" }
+        $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $remoteSession
+
+        echo $remoteLastExitCode
