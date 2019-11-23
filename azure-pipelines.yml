@@ -17,8 +17,7 @@ jobs:
 
     steps:
     - powershell: |
-        Enable-PSRemoting -Force
-        net localgroup /add WinRMRemoteWMIUsers__
+        winrm quickconfig -quiet
 
         Get-Process | Out-File -FilePath Process.txt
 
@@ -34,7 +33,7 @@ jobs:
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
 
         New-LocalUser $userName -Password $securePass -FullName $userName
-        Add-LocalGroupMember -Group WinRMRemoteWMIUsers__ -Member $userName
+        Add-LocalGroupMember -Group "Administrators" -Member $userName
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
