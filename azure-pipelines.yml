@@ -26,7 +26,6 @@ jobs:
         Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
 
         winrm quickconfig -quiet
-        enable-psremoting -force 
         pushd WSMan:\localhost\Shell 
         set-item MaxConcurrentUsers 100 
         set-item MaxProcessesPerShell 10000 
