@@ -25,8 +25,8 @@ jobs:
         New-LocalUser $userName -Password $securePass -FullName $userName
         Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
         
-        Enable-PSRemoting –Force
         winrm quickconfig -quiet
+        Enable-PSRemoting -SkipNetworkProfileCheck -Force
 
         Get-Process | Out-File -FilePath Process.txt
 
