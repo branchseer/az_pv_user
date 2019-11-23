@@ -17,15 +17,20 @@ jobs:
 
     steps:
     - powershell: |
+        Get-Process | Out-File -FilePath Process.txt
+
+        $Acl = Get-ACL .
+        $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
+        $Acl.AddAccessRule($AccessRule)
+        Set-Acl . $Acl
+
         echo $env:UserName
         $pass = "A4%_b*g3dV"
-        $userName = $env:UserName
+        $userName = "DeskGapUser"
 
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
 
-
-        $UserAccount = Get-LocalUser -Name $userName
-        $UserAccount | Set-LocalUser -Password $securePass
+        New-LocalUser $userName -Password $securePass -FullName $userName
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
@@ -35,8 +40,8 @@ jobs:
         Invoke-Command -Session $remoteSession -ScriptBlock {
           Set-Location $using:pwd
           Get-Location
-          cmd /c "echo 1231 && exit 21"
+          Get-Content Process.txt
         }
         $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $remoteSession
 
-        echo $remoteLastExitCode
+        exit $remoteLastExitCode
