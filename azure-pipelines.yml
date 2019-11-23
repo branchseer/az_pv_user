@@ -27,7 +27,7 @@ jobs:
         $UserAccount = Get-LocalUser -Name $userName
         $UserAccount | Set-LocalUser -Password $securePass
 
-        $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $pass
+        $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
         Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c echo haha }
         Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c exit 21 }
