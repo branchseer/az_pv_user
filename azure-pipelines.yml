@@ -15,6 +15,7 @@ jobs:
     pool:
       vmImage: $(imageName)
 
+    steps:
     - powershell: |
         echo $env:UserName
         $pass = "A4%_b*g3dV"
