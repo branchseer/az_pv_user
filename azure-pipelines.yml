@@ -26,7 +26,6 @@ jobs:
         Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
 
         winrm quickconfig -quiet
-        Enable-PSRemoting -Force
 
         Get-Process | Out-File -FilePath Process.txt
 
