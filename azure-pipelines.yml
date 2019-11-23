@@ -26,6 +26,20 @@ jobs:
         Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
 
         winrm quickconfig -quiet
+        enable-psremoting -force 
+        pushd WSMan:\localhost\Shell 
+        set-item MaxConcurrentUsers 100 
+        set-item MaxProcessesPerShell 10000 
+        set-item MaxMemoryPerShellMB 1024 
+        set-item MaxShellsPerUser 1000 
+        pushd WSMan:\localhost\Plugin\microsoft.powershell\Quotas 
+        set-item MaxConcurrentUsers 100 
+        set-item MaxProcessesPerShell 10000 
+        set-item MaxShells 1000 
+        set-item MaxShellsPerUser 1000 
+        restart-service winrm
+        popd
+        popd
 
         Get-Process | Out-File -FilePath Process.txt
 
@@ -36,7 +50,6 @@ jobs:
 
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
-
 
         $remoteSession = new-pssession -computername localhost -Credential $cred
         Invoke-Command -Session $remoteSession -ScriptBlock {
