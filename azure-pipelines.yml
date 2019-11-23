@@ -29,6 +29,8 @@ jobs:
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
+        winrm quickconfig -quiet
+
         Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c echo haha }
         Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c exit 21 }
 
