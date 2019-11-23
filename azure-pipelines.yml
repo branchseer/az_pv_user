@@ -17,6 +17,8 @@ jobs:
 
     steps:
     - powershell: |
+        winrm quickconfig -quiet
+
         Get-Process | Out-File -FilePath Process.txt
 
         $Acl = Get-ACL .
@@ -35,7 +37,6 @@ jobs:
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
-        winrm quickconfig -quiet
 
         $remoteSession = new-pssession -computername localhost -Credential $cred
         Invoke-Command -Session $remoteSession -ScriptBlock {
