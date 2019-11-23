@@ -23,22 +23,7 @@ jobs:
 
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
-        Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
-
-        winrm quickconfig -quiet
-        pushd WSMan:\localhost\Shell 
-        set-item MaxConcurrentUsers 100 
-        set-item MaxProcessesPerShell 10000 
-        set-item MaxMemoryPerShellMB 1024 
-        set-item MaxShellsPerUser 1000 
-        pushd WSMan:\localhost\Plugin\microsoft.powershell\Quotas 
-        set-item MaxConcurrentUsers 100 
-        set-item MaxProcessesPerShell 10000 
-        set-item MaxShells 1000 
-        set-item MaxShellsPerUser 1000 
-        restart-service winrm
-        popd
-        popd
+        Add-LocalGroupMember -Group "Administrators" -Member $userName
 
         Get-Process | Out-File -FilePath Process.txt
 
