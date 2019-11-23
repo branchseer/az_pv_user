@@ -1,0 +1,34 @@
+trigger:
+  - master
+
+pr:
+  - master
+
+jobs:
+  - job: build
+    strategy:
+      matrix:
+        win:
+          imageName: 'windows-2019'
+          cmakeGenerator: 'Visual Studio 16 2019'
+          buildDistPath: 'build/Release'
+    pool:
+      vmImage: $(imageName)
+
+    - powershell: |
+        echo $env:UserName
+        $pass = "A4%_b*g3dV"
+        $userName = $env:UserName
+
+        $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
+
+
+        $UserAccount = Get-LocalUser -Name $userName
+        $UserAccount | Set-LocalUser -Password $securePass
+
+        $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $pass
+
+        Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c echo haha }
+        Invoke-Command -ComputerName 'localhost' -Credential $cred -ScriptBlock { & cmd /c exit 21 }
+
+        echo $LASTEXITCODE
