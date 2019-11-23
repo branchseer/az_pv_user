@@ -17,8 +17,8 @@ jobs:
 
     steps:
     - powershell: |
+        Enable-PSRemoting -Force
         net localgroup /add WinRMRemoteWMIUsers__
-        winrm quickconfig -quiet
 
         Get-Process | Out-File -FilePath Process.txt
 
