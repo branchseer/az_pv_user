@@ -17,7 +17,16 @@ jobs:
 
     steps:
     - powershell: |
+        echo $env:UserName
+        $pass = "A4%_b*g3dV"
+        $userName = "DeskGapUser"
+
+        $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
+        New-LocalUser $userName -Password $securePass -FullName $userName
+        Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
+
         winrm quickconfig -quiet
+        Enable-PSRemoting --Force
 
         Get-Process | Out-File -FilePath Process.txt
 
@@ -26,14 +35,6 @@ jobs:
         $Acl.AddAccessRule($AccessRule)
         Set-Acl . $Acl
 
-        echo $env:UserName
-        $pass = "A4%_b*g3dV"
-        $userName = "DeskGapUser"
-
-        $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
-
-        New-LocalUser $userName -Password $securePass -FullName $userName
-        Add-LocalGroupMember -Group "Administrators" -Member $userName
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
 
