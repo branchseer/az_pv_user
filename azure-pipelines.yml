@@ -10,8 +10,9 @@ jobs:
       matrix:
         win:
           imageName: 'windows-2019'
-          cmakeGenerator: 'Visual Studio 16 2019'
-          buildDistPath: 'build/Release'
+          pass: 'A4_bg3dVd'
+          userName: 'DeskGapUser'
+
     pool:
       vmImage: $(imageName)
 
@@ -21,18 +22,14 @@ jobs:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl isadmin.cpp
     - powershell: |
-        $pass = "A4_bg3dVd"
-        $userName = "DeskGapUser"
-
-        $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
-        New-LocalUser $userName -Password $securePass -FullName $userName
+        $securePass = ConvertTo-SecureString $env:pass -AsPlainText -Force
+        New-LocalUser $env:userName -Password $securePass -FullName $env:userName
 
         $Acl = Get-ACL .
-        $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule($userName,"FullControl","ContainerInherit,Objectinherit","none","Allow")      
+        $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule($env:userName,"FullControl","ContainerInherit,Objectinherit","none","Allow")      
         $Acl.AddAccessRule($AccessRule)
         Set-Acl . $Acl
-    - script: |
+    - bash: |
         .\isadmin.exe
         psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
-        type isadmin_out
-  
+        cat isadmin_out
