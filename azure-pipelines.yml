@@ -17,6 +17,7 @@ jobs:
 
     steps:
     - powershell: |
+        winrm quickconfig -quiet
         $Acl = Get-ACL .
         $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
         $Acl.AddAccessRule($AccessRule)
@@ -27,11 +28,16 @@ jobs:
 
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
+        Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
 
         Get-Process | Out-File -FilePath Process.txt
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
         
-        New-PSSession -Credential $cred | Enter-PSSession
-        Get-Location
-        Get-Content Process.txt
+        $remoteSession = new-pssession -computername localhost -Credential $cred
+        Invoke-Command -Session $remoteSession -ScriptBlock {
+           Set-Location $using:pwd
+           Get-Content Process.txt
+        }
+        $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $remoteSession		
+        exit $remoteLastExitCode
