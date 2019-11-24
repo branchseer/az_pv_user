@@ -17,7 +17,6 @@ jobs:
 
     steps:
     - powershell: |
-        winrm quickconfig -quiet
         net localgroup /add WinRMRemoteWMIUsers__
 
         $Acl = Get-ACL .
