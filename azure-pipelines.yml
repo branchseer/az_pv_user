@@ -16,7 +16,7 @@ jobs:
       vmImage: $(imageName)
 
     steps:
-    - cmd: |
+    - script: |
         choco install -y pstools
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl isadmin.cpp
