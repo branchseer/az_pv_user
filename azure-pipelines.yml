@@ -33,5 +33,5 @@ jobs:
         New-LocalUser $userName -Password $securePass -FullName $userName
 
         .\isadmin.exe
-        psexec -accepteula -u $userName -p $pass cmd /c "isadmin.exe > isadmin_out 2>&1"
+        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
         Get-Content isadmin_out
