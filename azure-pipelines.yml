@@ -33,5 +33,5 @@ jobs:
         Set-Acl . $Acl
         
         .\isadmin.exe
-        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
+        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1" 2>$null
         Get-Content isadmin_out
