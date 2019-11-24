@@ -31,7 +31,8 @@ jobs:
         $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule($userName,"FullControl","ContainerInherit,Objectinherit","none","Allow")      
         $Acl.AddAccessRule($AccessRule)
         Set-Acl . $Acl
-        
+    - script: |
         .\isadmin.exe
-        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1" 2>$null
-        Get-Content isadmin_out
+        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
+        type isadmin_out
+  
