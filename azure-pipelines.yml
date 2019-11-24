@@ -17,7 +17,8 @@ jobs:
 
     steps:
     - powershell: |
-        net localgroup /add WinRMRemoteWMIUsers__
+        cl isadmin.cpp
+        choco install -y pstools
 
         $Acl = Get-ACL .
         $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
@@ -29,17 +30,9 @@ jobs:
 
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
-        Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
-        Add-LocalGroupMember -Group "WinRMRemoteWMIUsers__" -Member $userName
 
-        Get-Process | Out-File -FilePath Process.txt
+        isadmin.exe
+        psexec -u $userName -p $pass cmd /c "isadmin.exe > isadmin_out 2>&1"
+        Get-Content isadmin_out
 
-        $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
-        
-        $session = new-pssession -Credential $cred
-        Invoke-Command -Session $session -ScriptBlock {
-            Set-Location $using:pwd
-            Get-Content Process.txt
-        }
-        $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $session
-        exit $remoteLastExitCode
+
