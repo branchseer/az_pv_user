@@ -21,7 +21,6 @@ jobs:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl isadmin.cpp
     - powershell: |
-
         $Acl = Get-ACL .
         $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
         $Acl.AddAccessRule($AccessRule)
@@ -33,8 +32,6 @@ jobs:
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
 
-        isadmin.exe
+        .\isadmin.exe
         psexec -u $userName -p $pass cmd /c "isadmin.exe > isadmin_out 2>&1"
         Get-Content isadmin_out
-
-
