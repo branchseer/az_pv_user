@@ -21,17 +21,17 @@ jobs:
         call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl isadmin.cpp
     - powershell: |
-        $Acl = Get-ACL .
-        $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
-        $Acl.AddAccessRule($AccessRule)
-        Set-Acl . $Acl
-        
-        $pass = "A4%_b*g3dV"
+        $pass = "A4_bg3dVd"
         $userName = "DeskGapUser"
 
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
 
+        $Acl = Get-ACL .
+        $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule($userName,"FullControl","ContainerInherit,Objectinherit","none","Allow")      
+        $Acl.AddAccessRule($AccessRule)
+        Set-Acl . $Acl
+        
         .\isadmin.exe
         psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
         Get-Content isadmin_out
