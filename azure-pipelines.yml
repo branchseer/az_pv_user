@@ -37,10 +37,10 @@ jobs:
 
         $cred =  New-Object -TypeName PSCredential -ArgumentList $userName, $securePass
         
-        # $remoteSession = new-pssession -computername localhost -Credential $cred
-        Invoke-Command -Computername localhost -Credential $cred -ScriptBlock {
-           Set-Location $using:pwd
-           Get-Content Process.txt
+        $session = new-pssession -Credential $cred
+        Invoke-Command -Session $session -ScriptBlock {
+            Set-Location $using:pwd
+            Get-Content Process.txt
         }
-        # $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $remoteSession		
-        # exit $remoteLastExitCode
+        $remoteLastExitCode = Invoke-Command -ScriptBlock { $lastexitcode } -Session $session
+        exit $remoteLastExitCode
