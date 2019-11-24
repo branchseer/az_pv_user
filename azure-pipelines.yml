@@ -30,6 +30,7 @@ jobs:
         $Acl.AddAccessRule($AccessRule)
         Set-Acl . $Acl
     - bash: |
-        .\isadmin.exe
-        psexec -accepteula -u $userName -p $pass -w $pwd cmd /c "isadmin.exe > isadmin_out 2>&1"
+        ./isadmin.exe
+        echo psexec -accepteula -u $userName -p $pass -w "$PWD" cmd /c "isadmin.exe > isadmin_out 2>&1"
+        psexec -accepteula -u $userName -p $pass -w $PWD cmd /c "isadmin.exe > isadmin_out 2>&1"
         cat isadmin_out
