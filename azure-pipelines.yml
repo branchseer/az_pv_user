@@ -18,6 +18,8 @@ jobs:
     steps:
     - powershell: |
         winrm quickconfig -quiet
+        net localgroup /add WinRMRemoteWMIUsers__
+
         $Acl = Get-ACL .
         $AccessRule= New-Object System.Security.AccessControl.FileSystemAccessRule("everyone","FullControl","ContainerInherit,Objectinherit","none","Allow")      
         $Acl.AddAccessRule($AccessRule)
@@ -29,6 +31,7 @@ jobs:
         $securePass = ConvertTo-SecureString $pass -AsPlainText -Force
         New-LocalUser $userName -Password $securePass -FullName $userName
         Add-LocalGroupMember -Group "Remote Management Users" -Member $userName
+        Add-LocalGroupMember -Group "WinRMRemoteWMIUsers__" -Member $userName
 
         Get-Process | Out-File -FilePath Process.txt
 
